@@ -18,11 +18,10 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3
-      - name: Extract Branch Name
-        uses: mathiasvr/command-output@v1
+      - name: Set branch name
         id: branch
-        with:
-          run: echo ${GITHUB_REF#refs/heads/}
+        run: echo "::set-output name=BRANCH_NAME::${GITHUB_REF##*/}"
+        run: echo ${GITHUB_REF#refs/heads/}
       - name: Install Poetry
         run: pipx install poetry
       - name: Install Python
@@ -34,13 +33,11 @@ jobs:
         run: poetry self update -vv
       - name: Install Project Dependencies
         run: poetry install -vv
+      - name: Extract Project Version
+        id: version
+        run: echo "::set-output name=PROJECT_VERSION::$(poetry version -s)"
       - name: Build Site
         run: poetry run sphinx-build -M html source build
-      - name: Extract Project Version
-        uses: mathiasvr/command-output@v1
-        id: version
-        with:
-          run: poetry version -s
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
@@ -49,6 +46,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/html
           force_orphan: true
-          destination_dir: ${{ steps.branch.outputs.stdout }}/${{ steps.version.outputs.stdout }}
+          destination_dir: ${( steps.branch.outputs.BRANCH_NAME }}/${( steps.version.outputs.PROJECT_VERSION }}
           enable_jekyll: true
           allow_empty_commit: true
