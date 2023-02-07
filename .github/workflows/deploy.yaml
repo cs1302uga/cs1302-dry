@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Set branch name
         id: branch
-        run: echo "::set-output name=BRANCH_NAME::${GITHUB_REF##*/}"
+        run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_STATE
       - name: Install Poetry
         run: pipx install poetry
       - name: Install Python
@@ -38,7 +38,7 @@ jobs:
         run: poetry install -vv
       - name: Extract Project Version
         id: version
-        run: echo "::set-output name=PROJECT_VERSION::$(poetry version -s)"
+        run: echo "PROJECT_VERSION=$(poetry version -s)" >> $GITHUB_STATE
       - name: Build Site
         run: poetry run sphinx-build -M html source build
       - name: Deploy to GitHub Pages
@@ -49,5 +49,4 @@ jobs:
           publish_dir: _build/html
           force_orphan: true
           destination_dir: ${( steps.branch.outputs.BRANCH_NAME }}/${( steps.version.outputs.PROJECT_VERSION }}
-          enable_jekyll: true
           allow_empty_commit: true
