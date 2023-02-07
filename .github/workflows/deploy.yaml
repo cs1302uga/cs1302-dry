@@ -30,7 +30,7 @@ jobs:
       - name: Install Project Dependencies
         run: poetry install -vv
       - name: Build Site
-        run: make html
+        run: poetry run sphinx-build -M html source build
       - name: Extract Project Version
         uses: mathiasvr/command-output@v1
         id: version
