@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "cs1302-dry"
 version = "1.0.0a0"
-description = "DRY examples"
+description = "Don't Repeat Yourself in CSCI 1302"
 authors = ["Michael E. Cotterell <mepcott@uga.edu>"]
 license = "CC-BY-NC-SA-4.0"
 readme = "README.md"
