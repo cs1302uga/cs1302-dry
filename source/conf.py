@@ -75,4 +75,4 @@ if parsed_version.pre:
     announcement_message = (
         f"This page belongs to a pre-release version ({version}) of the book."
     )
-    html_theme_options["announcement"] = anncouncement_message
+    html_theme_options["announcement"] = announcement_message

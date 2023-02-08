@@ -14,13 +14,14 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+efaults:
+  run:
+    shell: bash
+
 jobs:
 
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3
@@ -35,9 +36,9 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - name: Update Poetry
-        run: poetry self update -vv
+        run: poetry self update -v
       - name: Install Project Dependencies
-        run: poetry install -vv
+        run: poetry install -v
       - name: Extract Project Version
         id: version
         run: echo "PROJECT_VERSION=$(poetry version -s)" >> $GITHUB_STATE
@@ -49,5 +50,14 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           path: build/html
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v1
